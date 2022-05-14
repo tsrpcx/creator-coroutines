@@ -1,22 +1,24 @@
 import { _decorator, Node } from "cc";
-import { Command } from "./Command";
+import { Coroutine } from "./Coroutine";
+import { randomBool, randomRange } from "./rand";
 import { WaitForSeconds } from "./WaitForSeconds";
 
 const { ccclass } = _decorator;
 
-function randomBool(): boolean {
-    return Math.random() > 0.5;
-}
-
-function randomRange(min: number, max: number): number {
-    return Math.random() * (max - min) + min;
+export interface IAttackMeleeData {
+    attackerName: string;
+    damageMin: number;
+    damageMax: number;
+    attackSpeed: number;
 }
 
 @ccclass
-export class AttackMelee extends Command {
+export class AttackMelee extends Coroutine {
 
-    public setData(data: any) {
-        console.log('AttackMelee.setData', data);
+    private data: IAttackMeleeData = null;
+
+    public setData(data: IAttackMeleeData) {
+        this.data = data;
     }
 
     public executeRoutine(): void {
@@ -25,53 +27,39 @@ export class AttackMelee extends Command {
 
     public async asyncRoutine() {
 
-        do {
+        while (true) {
+
+            if (this.abortSignal.aborted) break;
 
             const distanceCanReach = randomBool()
             if (!distanceCanReach) {
-                console.log(this.node.name, 'distanceCanReach', distanceCanReach);
+                console.log(this.data.attackerName, 'distanceCanReach', distanceCanReach);
+                continue;
+            }
+
+            console.log(this.data.attackerName, 'do attack');
+
+            if (this.abortSignal.aborted) break;
+
+            const damage = Math.floor(randomRange(this.data.damageMin, this.data.damageMax));
+
+            console.log(this.data.attackerName, 'damage', damage);
+
+            if (this.abortSignal.aborted) break;
+
+            const exit = randomRange(1, 100) < 5;
+            if (exit) {
                 break;
             }
 
-            const atkDelay = randomRange(0, 2);
-
-            if (atkDelay) {
-                await WaitForSeconds(this, atkDelay, this._abortController.signal);
-            }
-
-            console.log(this.node.name, 'atk');
-
-            const targetDead = randomBool()
-
-            if (targetDead) {
-                console.log(this.node.name, 'targetDead', targetDead);
-                break;
-            }
-
-            if (this._abortController.signal.aborted) break;
-
-            const damage = randomRange(100, 500);
-            console.log(this.node.name, 'damage', damage);
-
-            if (this._abortController.signal.aborted) break;
-
-            const cleaveDamagePct = randomRange(0, 1);
-
-            if (cleaveDamagePct > 0) {
-                console.log(this.node.name, 'cleaveDamage', damage * cleaveDamagePct);
-            }
-
-            if (this._abortController.signal.aborted) break;
-
-            const cooldownTime = randomRange(0, 2);
+            const cooldownTime = this.data.attackSpeed;
 
             if (cooldownTime) {
-                await WaitForSeconds(this, cooldownTime);
+                await WaitForSeconds(this, cooldownTime, this.abortSignal);
             }
         }
-        while (false);
 
-        console.log(this.node.name, 'asyncRoutine exit');
-        this.onExit && this.onExit(this.routineId);
+        console.log(this.data.attackerName, 'call exit');
+        this.exitRoutine(this.data.attackerName);
     }
 }

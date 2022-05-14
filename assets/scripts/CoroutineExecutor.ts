@@ -1,33 +1,79 @@
-import { _decorator, Component } from "cc";
-import { Command } from "./Command";
+import { _decorator, Component, Eventify } from "cc";
+import { Coroutine } from "./Coroutine";
 
 const { ccclass } = _decorator;
+
+export interface CoroutineExecutorBinder {
+	m_coroutineExecutor: CoroutineExecutor;
+	onCoroutineExecutorRoutineExit(id: string, exitArg?: any): void;
+}
 
 @ccclass
 export class CoroutineExecutor extends Component {
 
-	private _routines: Command[] = [];
+	private _routines: Coroutine[] = [];
+	private binder: CoroutineExecutorBinder = null;
 
-	public StartCoroutine<T>(T: any, data: any): string {
-		const routine: Command = this.addComponent(T);
+	public static with(c: Component): CoroutineExecutor {
+		const binder: CoroutineExecutorBinder = c as any as CoroutineExecutorBinder;
+		binder.m_coroutineExecutor = binder.m_coroutineExecutor || (binder as any as Component).getComponent(CoroutineExecutor) || (binder as any as Component).addComponent(CoroutineExecutor);
+		binder.m_coroutineExecutor.binder = binder;
+		return binder.m_coroutineExecutor;
+	}
+
+	public StartCoroutine<T>(T: any, data: any = null): string {
+		const routine: Coroutine = this.addComponent(T);
 		this._routines.push(routine);
+
+		data && routine.setData(data);
 		routine.onExit = this.onRoutineExit.bind(this);
 		routine.executeRoutine();
+
 		return routine.routineId;
 	}
 
-	public StopCoroutine(id: string): void {
+	public StopCoroutine(id: string): boolean {
+		let has = false;
+		if (id && id.length) {
+			for (let i = this._routines.length - 1; i >= 0; i--) {
+				const routine = this._routines[i];
+				if (routine && routine.routineId == id) {
+					routine.cancelRoutine();
+					has = true;
+					break;
+				}
+			}
+		}
+		return has;
+	}
+
+	public IsCoroutineRunning(id: string): boolean {
+		let has = true;
 		for (let i = this._routines.length - 1; i >= 0; i--) {
 			const routine = this._routines[i];
 			if (routine && routine.routineId == id) {
-				routine.cancelRoutine();
+				has = true;
+				break;
 			}
-			this._routines.splice(i, 1);
 		}
+		return has;
 	}
 
-	private onRoutineExit(id: string) {
-		this.StopCoroutine(id);
+	private onRoutineExit(id: string, exitArg: any) {
+		if (id && id.length) {
+
+			let routineExist = false;
+			for (let i = this._routines.length - 1; i >= 0; i--) {
+				const routine = this._routines[i];
+				if (routine && routine.routineId == id) {
+					this._routines.splice(i, 1);
+					routineExist = true;
+					break;
+				}
+			}
+
+			routineExist && this.binder && this.binder.onCoroutineExecutorRoutineExit && this.binder.onCoroutineExecutorRoutineExit(id, exitArg);
+		}
 	}
 
 	public StopAllCoroutines(routine: any) {
