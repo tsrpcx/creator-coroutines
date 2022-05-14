@@ -21,13 +21,12 @@ export class CoroutineExecutor extends Component {
 		return binder.m_coroutineExecutor;
 	}
 
-	public StartCoroutine<T>(T: any, data: any = null): string {
-		const routine: Coroutine = this.addComponent(T);
+	public StartCoroutine(func: (coroutine: Coroutine) => Promise<any>): string {
+		const routine: Coroutine = this.addComponent(Coroutine);
 		this._routines.push(routine);
 
-		data && routine.setData(data);
 		routine.onExit = this.onRoutineExit.bind(this);
-		routine.executeRoutine();
+		routine.executeRoutine(func);
 
 		return routine.routineId;
 	}
@@ -85,4 +84,8 @@ export class CoroutineExecutor extends Component {
 		}
 		this._routines.length = 0;
 	}
+}
+
+export function StartCoroutineWith(c: Component, func: (coroutine: Coroutine) => Promise<any>): string {
+	return CoroutineExecutor.with(c).StartCoroutine(func);
 }

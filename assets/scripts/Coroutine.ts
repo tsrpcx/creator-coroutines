@@ -5,7 +5,7 @@ const { ccclass } = _decorator;
 export class Coroutine extends Component {
 
     protected m_abortController: AbortController = new AbortController();
-    protected get abortSignal(): AbortSignal { return this.m_abortController.signal; }
+    public get abortSignal(): AbortSignal { return this.m_abortController.signal; }
 
     protected m_exitCalled: boolean = false;
 
@@ -28,14 +28,21 @@ export class Coroutine extends Component {
         this.destroy();
     }
 
-    public executeRoutine() {
-        this.asyncRoutine();
+    public executeRoutine(func: (coroutine: Coroutine) => Promise<void>) {
+        this.asyncRoutine(func);
     }
 
-    protected async asyncRoutine() {
-        // do sth
+    protected async asyncRoutine(func: (coroutine: Coroutine) => Promise<void>) {
+        let exitArg: any = null;
 
-        this.exitRoutine();
+        try {
+            exitArg = await func(this);
+        }
+        catch (e) {
+            console.error(e);
+        }
+
+        this.exitRoutine(exitArg);
     }
 
     public setData(data: any) {
