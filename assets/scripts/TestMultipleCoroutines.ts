@@ -16,7 +16,7 @@ export class TestMultipleCoroutines extends Component {
         routines.push(StartCoroutine(this, async (c: Coroutine) => {
             const workName = this.node.name + ' work1';
             while (true) {
-                await c.WaitForSeconds(c, 0.5);
+                await c.WaitForSeconds(0.5);
                 console.log(workName, 'do some work');
                 if (randomRange(1, 100) < 10) break;
             }
@@ -27,7 +27,7 @@ export class TestMultipleCoroutines extends Component {
         routines.push(StartCoroutine(this, async (c: Coroutine) => {
             const workName = this.node.name + ' work2';
             while (true) {
-                await c.WaitForSeconds(c, 0.5);
+                await c.WaitForSeconds(0.5);
                 console.log(workName, 'do some work');
                 if (randomRange(1, 100) < 10) break;
             }
@@ -38,7 +38,7 @@ export class TestMultipleCoroutines extends Component {
         routines.push(StartCoroutine(this, async (c: Coroutine) => {
             const workName = this.node.name + ' work3';
             while (true) {
-                await c.WaitForSeconds(c, 0.5);
+                await c.WaitForSeconds(0.5);
                 console.log(workName, 'do some work');
                 if (randomRange(1, 100) < 10) break;
             }
@@ -49,7 +49,7 @@ export class TestMultipleCoroutines extends Component {
         routines.push(StartCoroutine(this, async (c: Coroutine) => {
             const workName = this.node.name + ' work4';
             while (true) {
-                await c.WaitForSeconds(c, 0.5);
+                await c.WaitForSeconds(0.5);
                 console.log(workName, 'do some work');
                 if (randomRange(1, 100) < 10) break;
             }
@@ -60,7 +60,7 @@ export class TestMultipleCoroutines extends Component {
         routines.push(StartCoroutine(this, async (c: Coroutine) => {
             const workName = this.node.name + ' work5';
             while (true) {
-                await c.WaitForSeconds(c, 0.5);
+                await c.WaitForSeconds(0.5);
                 console.log(workName, 'do some work');
                 if (randomRange(1, 100) < 10) break;
             }
@@ -71,7 +71,7 @@ export class TestMultipleCoroutines extends Component {
         routines.push(StartCoroutine(this, async (c: Coroutine) => {
             const workName = this.node.name + ' work6';
             while (true) {
-                await c.WaitForSeconds(c, 0.5);
+                await c.WaitForSeconds(0.5);
                 console.log(workName, 'do some work');
                 if (randomRange(1, 100) < 10) break;
             }
@@ -82,7 +82,7 @@ export class TestMultipleCoroutines extends Component {
         routines.push(StartCoroutine(this, async (c: Coroutine) => {
             const workName = this.node.name + ' work7';
             while (true) {
-                await c.WaitForSeconds(c, 0.5);
+                await c.WaitForSeconds(0.5);
                 console.log(workName, 'do some work');
                 if (randomRange(1, 100) < 10) break;
             }
@@ -93,7 +93,7 @@ export class TestMultipleCoroutines extends Component {
         routines.push(StartCoroutine(this, async (c: Coroutine) => {
             const workName = this.node.name + ' work8';
             while (true) {
-                await c.WaitForSeconds(c, 0.5);
+                await c.WaitForSeconds(0.5);
                 console.log(workName, 'do some work');
                 if (randomRange(1, 100) < 10) break;
             }
@@ -104,7 +104,7 @@ export class TestMultipleCoroutines extends Component {
         routines.push(StartCoroutine(this, async (c: Coroutine) => {
             const workName = this.node.name + ' work9';
             while (true) {
-                await c.WaitForSeconds(c, 0.5);
+                await c.WaitForSeconds(0.5);
                 console.log(workName, 'do some work');
                 if (randomRange(1, 100) < 10) break;
             }
@@ -115,7 +115,7 @@ export class TestMultipleCoroutines extends Component {
         routines.push(StartCoroutine(this, async (c: Coroutine) => {
             const workName = this.node.name + ' work10';
             while (true) {
-                await c.WaitForSeconds(c, 0.5);
+                await c.WaitForSeconds(0.5);
                 console.log(workName, 'do some work');
                 if (randomRange(1, 100) < 10) break;
             }

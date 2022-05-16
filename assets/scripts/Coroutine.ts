@@ -31,7 +31,7 @@ export class Coroutine extends Component {
 		this.asyncRoutine(func);
 	}
 
-	public async WaitForSeconds(comp: Coroutine, delay: number) {
+	public async WaitForSeconds(delay: number) {
 
 		if (!(isValid(this) && isValid(this.node))) return null;
 
@@ -45,12 +45,12 @@ export class Coroutine extends Component {
 				if (this.abortSignal.aborted) waitForSecondsComplete();
 
 				this.abortSignal.addEventListener('abort', () => {
-					comp.unschedule(waitForSecondsComplete);
+					this.unschedule(waitForSecondsComplete);
 					waitForSecondsComplete();
 				});
 			}
 
-			comp.scheduleOnce(waitForSecondsComplete, delay);
+			this.scheduleOnce(waitForSecondsComplete, delay);
 		});
 	}
 
