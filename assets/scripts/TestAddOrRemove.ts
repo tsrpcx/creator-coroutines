@@ -1,5 +1,5 @@
 
-import { _decorator, Component, instantiate, Node, Label } from 'cc';
+import { _decorator, Component, instantiate, Node, Label, Layout, Vec3, __private } from 'cc';
 import { Coroutine, CoroutineRemoveExitCall, CoroutineSetExitCall, StartCoroutine, StopAllCoroutines, StopCoroutine } from './Coroutine';
 import { randomBool, randomRange } from './rand';
 const { ccclass, property } = _decorator;
@@ -13,25 +13,35 @@ export class TestAddOrRemove extends Component {
     @_decorator.property({ type: Label })
     private nodeCount: Label = null;
 
-    public nodeList: Node[] = [];
+    @_decorator.property({ type: Layout })
+    private layout: Layout = null;
 
     public add() {
         const node = instantiate(this.prefab);
+        node.name = '' + this.node.children.length;
         node.parent = this.node;
-        node.name = '' + this.nodeList.length;
-        this.nodeList.push(node);
+        node.setPosition(Vec3.ZERO);
         node.active = true;
 
-        this.nodeCount.string = '' + this.nodeList.length;
+        this.nodeCount.string = '' + this.node.children.length;
+
+        this.layout.updateLayout();
     }
 
     public remove() {
-        if (this.nodeList.length) {
-            let x = Math.floor(randomRange(0, this.nodeList.length));
-            this.nodeList[x].destroy();
-            this.nodeList.splice(x, 1);
+        if (this.node.children.length) {
+            let x = Math.floor(randomRange(0, this.node.children.length));
+            this.node.children[x].destroy();
         }
 
-        this.nodeCount.string = '' + this.nodeList.length;
+        this.nodeCount.string = '' + this.node.children.length;
+    }
+
+    start() {
+        this.node.on(Node.EventType.CHILD_REMOVED, this.childeChaged, this);
+    }
+
+    childeChaged() {
+        this.nodeCount.string = '' + this.node.children.length;
     }
 }
