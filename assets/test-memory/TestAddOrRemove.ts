@@ -1,6 +1,6 @@
 
 import { _decorator, Component, instantiate, Node, Label, Layout, Vec3, __private } from 'cc';
-import { Coroutine, CoroutineRemoveExitCall, CoroutineSetExitCall, StartCoroutine, StopAllCoroutines, StopCoroutine } from './Coroutine';
+import { Coroutine, CoroutineRemoveExitCall, CoroutineSetExitCall, StartCoroutine, StopAllCoroutines, StopCoroutine } from '../src/Coroutine';
 import { randomBool, randomRange } from './rand';
 const { ccclass, property } = _decorator;
 

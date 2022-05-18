@@ -1,6 +1,6 @@
 
 import { _decorator, Component } from 'cc';
-import { Coroutine, CoroutineRemoveExitCall, CoroutineSetExitCall, StartCoroutine, StopAllCoroutines, StopCoroutine, WaitForNextFrame, WaitForSeconds } from './Coroutine';
+import { Coroutine, CoroutineRemoveExitCall, CoroutineSetExitCall, StartCoroutine, StopAllCoroutines, StopCoroutine, WaitForNextFrame, WaitForSeconds } from '../src/Coroutine';
 import { randomBool, randomRange } from './rand';
 const { ccclass, property } = _decorator;
 

@@ -13,6 +13,8 @@ export class WaitForSeconds {
 export class WaitForNextFrame {
 }
 
+export const waitForNextFrame = new WaitForNextFrame();
+
 @_decorator.ccclass
 export class Coroutine extends Component {
 
@@ -98,6 +100,8 @@ export class Coroutine extends Component {
     }
 
     private async asyncRoutine(gen: Generator) {
+
+        await this.asyncWaitForSeconds(0);
 
         const genStack: Array<Generator> = [];
         genStack.push(gen);
