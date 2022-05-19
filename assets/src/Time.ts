@@ -1,9 +1,9 @@
-// https://forum.cocos.org/t/topic/123701
-
 import { director, dragonBones, Node, TweenSystem, Animation, ISchedulable, sp, game } from "cc";
 import { PREVIEW } from "cc/env";
 
 /** muzzik
+ * pause resume 
+ // https://forum.cocos.org/t/topic/123701
  * # 前言
 众所周知，我们想要全局暂停游戏的话只能调用 director.pause 或者  game.pause， 但这两个方法都有局限性，首先是不能排除部分节点不暂停，其次是新增节点也会随之暂停，适用性很窄
 
@@ -352,26 +352,36 @@ export class Time {
         }
     }
 
+    // 1 -> 无缩放; 0.5 -> 减速; 2 -> 加速
     public static set timeScale(v: number) {
         if (TimeCache.globalTimeScale != v)
             TimeCache.globalTimeScale = v;
         this.hookTime();
     }
 
+    // 1 -> 无缩放; 0.5 -> 减速; 2 -> 加速
     public static get timeScale(): number {
         return TimeCache.globalTimeScale;
     }
 
+    // Second 秒
     public static get deltaTime(): number {
         return TimeCache.globalDeltaTime;
     }
 
+    // Second 秒
     public static get unscaledDeltaTime(): number {
         return TimeCache.globalRealDeltaTime;
     }
 
-    public static get realtimeSinceStartup(): number {
+    // Millisecond 毫秒
+    public static get realtimeSinceStartupMs(): number {
         return TimeCache.globalRealtimeSinceStartup;
+    }
+
+    // Second 秒
+    public static get realtimeSinceStartup(): number {
+        return TimeCache.globalRealtimeSinceStartup / 1000;
     }
 
     public static get now(): number {

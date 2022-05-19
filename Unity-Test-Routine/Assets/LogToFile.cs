@@ -16,7 +16,7 @@ public static class LogToFile {
 	}
 
 	public static void Log(string message) {
-		var msg = string.Format("{0,5:###.00}", Time.realtimeSinceStartup) + "\t" + message;
+		var msg = string.Format("{0,5:###.0000}", Time.realtimeSinceStartup) + "\t" + message;
 		WriterToFile(msg);
 		UnityEngine.Debug.Log(msg);
 	}

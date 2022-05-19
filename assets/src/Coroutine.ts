@@ -15,6 +15,15 @@ export class WaitForNextFrame {
 
 export const waitForNextFrame = new WaitForNextFrame();
 
+export class WaitUntil {
+
+    public condition: (c: Coroutine) => Promise<any>;
+
+    constructor(condition: (c: Coroutine) => Promise<any>) {
+        this.condition = condition;
+    }
+}
+
 @_decorator.ccclass
 export class Coroutine extends Component {
 
@@ -142,6 +151,11 @@ export class Coroutine extends Component {
 
             if (value instanceof WaitForNextFrame) {
                 await this.asyncWaitForSeconds(0, true);
+                continue;
+            }
+
+            if (value instanceof WaitUntil) {
+                await value.condition(this);
                 continue;
             }
 
