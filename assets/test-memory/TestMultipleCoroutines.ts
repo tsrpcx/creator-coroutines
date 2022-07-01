@@ -49,7 +49,7 @@ export class TestMultipleCoroutines extends Component {
         }
     }
 
-    private routines = [];
+    private routines: string[] = [];
 
     onEnable() {
         this.scheduleOnce(() => {

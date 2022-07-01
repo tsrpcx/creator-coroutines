@@ -1,4 +1,4 @@
-import { _decorator, Component, isValid } from "cc";
+import { Component, isValid, _decorator } from "cc";
 import { Time } from "./Time";
 
 export class WaitForSeconds {
@@ -39,7 +39,7 @@ export class Coroutine extends Component {
     public routineId: string;
 
     public cancelRoutine() {
-        this.m_abortController.abort("cancel");
+        this.m_abortController.abort();
     }
 
     private exitRoutine(exitArg: any = null) {
@@ -110,7 +110,7 @@ export class Coroutine extends Component {
 
     private async asyncRoutine(gen: Generator) {
 
-        await this.asyncWaitForSeconds(0);
+        // await this.asyncWaitForSeconds(0);
 
         const genStack: Array<Generator> = [];
         genStack.push(gen);
@@ -131,7 +131,7 @@ export class Coroutine extends Component {
                 vd = current.next(this);
             }
             catch (e) {
-                console.log(e);
+                console.error(e);
                 if (e) {
                     genStack.pop();
                     continue;
@@ -155,7 +155,12 @@ export class Coroutine extends Component {
             }
 
             if (value instanceof WaitUntil) {
-                await value.condition(this);
+                try {
+                    await value.condition(this);
+                }
+                catch (e) {
+                    console.error(e);
+                }
                 continue;
             }
 
@@ -231,7 +236,7 @@ class CoroutineExecutor {
     }
 
     public IsCoroutineRunning(id: string): boolean {
-        let has = true;
+        let has = false;
         for (let i = this._routines.length - 1; i >= 0; i--) {
             const routine = this._routines[i];
             if (routine && routine.routineId == id) {
@@ -291,6 +296,7 @@ export function StopCoroutine(c: Component, id: string): boolean {
 }
 
 export function IsCoroutineRunning(c: Component, id: string): boolean {
+    if (!id || id.length) return false;
     let exec = CoroutineExecutor.with(c);
     return exec ? exec.IsCoroutineRunning(id) : false;
 }

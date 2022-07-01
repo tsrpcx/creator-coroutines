@@ -4,6 +4,8 @@
 
   /* Add your custom configuration here. */
   "compilerOptions": {
-    "strict": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "strictNullChecks": false
   }
 }
