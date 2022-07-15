@@ -1,5 +1,6 @@
 import { Component, isValid, _decorator } from "cc";
 import { Time } from "./Time";
+import { AbortController, AbortSignal } from "./AbortController";
 
 export class WaitForSeconds {
     public seconds: number;
@@ -59,7 +60,7 @@ export class Coroutine extends Component {
                 return;
             }
 
-            this.abortSignal.addEventListener('abort', () => {
+            this.abortSignal.addEventListener(() => {
                 if (this._timeEnd) {
                     this._timeEnd();
                     this._timeEnd = null;
@@ -75,12 +76,24 @@ export class Coroutine extends Component {
     private _timePassed: number = 0;
     private _timeDuration: number = 0;
 
-    protected update(dt: number) {
+    private _frameEnd: () => void = null;
+    private _framePassed: number = 0;
+    private _frameDuration: number = 0;
+
+    protected lateUpdate(dt: number) {
         if (this._timeEnd) {
             this._timePassed += this._useUnscaleTime ? Time.unscaledDeltaTime : Time.deltaTime;
             if (this._timePassed >= this._timeDuration) {
                 this._timeEnd();
                 this._timeEnd = null;
+            }
+        }
+
+        if (this._frameEnd) {
+            this._framePassed += 1;
+            if (this._framePassed > this._frameDuration) {
+                this._frameEnd();
+                this._frameEnd = null;
             }
         }
     }
@@ -108,9 +121,31 @@ export class Coroutine extends Component {
         });
     }
 
+    public async asyncWaitForFrames(frameDuration: number = 1): Promise<void> {
+
+        if (!(isValid(this) && isValid(this.node))) return null;
+
+        this._framePassed = 0;
+        this._frameDuration = frameDuration;
+
+        return new Promise((resolve, reject) => {
+
+            this._frameEnd = () => {
+                resolve();
+            }
+
+            if (this.abortSignal) {
+                if (this.abortSignal.aborted) {
+                    this._frameEnd = null;
+                    resolve();
+                }
+            }
+        });
+    }
+
     private async asyncRoutine(gen: Generator) {
 
-        // await this.asyncWaitForSeconds(0);
+        await this.asyncWaitForFrames();
 
         const genStack: Array<Generator> = [];
         genStack.push(gen);
@@ -150,7 +185,7 @@ export class Coroutine extends Component {
             }
 
             if (value instanceof WaitForNextFrame) {
-                await this.asyncWaitForSeconds(0, true);
+                await this.asyncWaitForFrames();
                 continue;
             }
 
@@ -174,6 +209,8 @@ export class Coroutine extends Component {
     }
 
     protected onDestroy(): void {
+        this.m_abortController.clear();
+        this.m_abortController = null;
         this.onExit = null;
         this._timeEnd = null;
     }
