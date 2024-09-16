@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "es6",
+        "outDir": "./dist",
+        "declaration": true,
+        "strict": true,
+        "moduleResolution": "Node",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
+    }
+}
